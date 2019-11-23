@@ -3,15 +3,6 @@ import gmplot
 import os
 
 
-def get_filenames(dir):
-    filenames = []
-    for directory in os.listdir(dir):
-        for filename in os.listdir(dir + '\\' + directory):
-            print('start', filename)
-            filenames.append(filename)
-    return filenames
-
-
 def convert_gps_to_degrees(list_of_gps):
     list_of_degrees = []
     for l in list_of_gps:
