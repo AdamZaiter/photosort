@@ -1,57 +1,6 @@
-from PIL import Image, ExifTags
-import gmplot
+from PIL import Image
 import os
 DATETag = 36867
-list_of_filenames = []
-
-
-def convert_gps_to_degrees(latitude, longitude):
-    lat_degree = list(latitude[0])
-    lat_degree = lat_degree[0] / lat_degree[1]
-    lat_minute = list(latitude[1])
-    lat_minute = lat_minute[0] / lat_minute[1]
-    lat_minute = lat_minute / 60
-    lat_second = list(latitude[2])
-    lat_second = lat_second[0] / lat_second[1]
-    lat_second = lat_second / 3600
-
-    long_degree = list(longitude[0])
-    long_degree = long_degree[0] / long_degree[1]
-    long_minute = list(longitude[1])
-    long_minute = long_minute[0] / long_minute[1]
-    long_minute = long_minute / 60
-    long_second = list(longitude[2])
-    long_second = long_second[0] / long_second[1]
-    long_second = long_second / 3600
-    return lat_degree + lat_minute + lat_second, long_degree + long_minute + long_second
-
-
-def get_GPS(filename):
-    try:
-        img = Image.open(filename)
-        exif = {ExifTags.TAGS[k]: v for k,
-                v in img._getexif().items() if k in ExifTags.TAGS}
-        gpsinfo = {}
-        for key in exif['GPSInfo'].keys():
-            decode = ExifTags.GPSTAGS.get(key, key)
-            gpsinfo[decode] = exif['GPSInfo'][key]
-        latitude = gpsinfo['GPSLatitude']
-        longitude = gpsinfo['GPSLongitude']
-        return latitude, longitude
-    except:
-        pass
-
-
-def get_map(list_of_converted_gps, dest_dir, list_of_filenames):
-
-    gmap = gmplot.GoogleMapPlotter(
-        list_of_converted_gps[0][0], list_of_converted_gps[0][1], 10)
-    for i, coordinates in enumerate(list_of_converted_gps):
-        gmap.marker(coordinates[0], coordinates[1],
-                    'cornflowerblue', title=list_of_filenames[i])
-    # Pass the absolute path
-    gmap.draw(dest_dir + '\\gpsmap.html')
-    print('Google map drawn.')
 
 
 def get_date_taken(path):
@@ -65,7 +14,6 @@ def get_date_taken(path):
 
 
 def rename_files(dest_dir, flags_dict):
-    list_of_coordinates = []
     os.chdir(dest_dir)
     used_file_names = []
     for filename in os.listdir(dest_dir):
@@ -131,11 +79,3 @@ def rename_files(dest_dir, flags_dict):
                 dest_dir_format = dest_dir + '\\' + filename
                 f.close()
                 os.renames(dest_dir_format, file_name)
-
-                if flags_dict['-m']:
-                    list_of_coordinates.append(get_GPS(dest_dir + '\\' + file_name))
-                if None in list_of_coordinates:
-                    list_of_coordinates.remove(None)
-                else:
-                    list_of_filenames.append(file_name)
-    return list_of_coordinates, list_of_filenames
