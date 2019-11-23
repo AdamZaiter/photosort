@@ -5,7 +5,12 @@ DATETag = 36867
 
 def get_date_taken(path):
     try:
-        return Image.open(path)._getexif()[DATETag]
+        img = Image.open(path)
+        info = img.getexif()
+        try:
+            return info[DATETag]
+        except KeyError:
+            pass
     except IOError:
         pass
 

@@ -61,5 +61,8 @@ R.rename_files(dest_dir, flags_dict)
 if flags_dict['-m']:
     directory = dest_dir + '\\photos'
     list_of_gps = GPS.get_GPS(directory)
-    list_of_degrees = GPS.convert_gps_to_degrees(list_of_gps)
-    GPS.get_map(list_of_degrees, dest_dir)
+    if list_of_gps:
+        list_of_degrees = GPS.convert_gps_to_degrees(list_of_gps)
+        GPS.get_map(list_of_degrees, dest_dir)
+    else:
+        print('GPS coordinates couldn\'t be retrieved.')
