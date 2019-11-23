@@ -3,6 +3,7 @@ import gmplot
 import os
 
 
+
 def get_filenames(dir):
     filenames = []
     for directory in os.listdir(dir):
@@ -72,6 +73,10 @@ def get_map(list_of_converted_gps, dest_dir):
 
     gmap = gmplot.GoogleMapPlotter(
         list_of_converted_gps[0][0], list_of_converted_gps[0][1], 10)
+    #gmplot doesn't have functioning markers on windows, this is the solution to it'
+    gmap.coloricon = gmap.coloricon.replace('/', '\\').replace('\\', '\\\\')
+
+    
     for elems in list_of_converted_gps:
         gmap.marker(elems[0], elems[1],
                     'cornflowerblue', title=elems[2])
