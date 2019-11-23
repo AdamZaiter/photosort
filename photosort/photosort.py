@@ -49,14 +49,18 @@ for i in range(3, len(sys.argv)):
 
 src_dir = (sys.argv[1])
 dest_dir = (sys.argv[2])
+if src_dir == dest_dir:
+    print('Directories cannot be the same!')
+    sys.exit()
 
 copy_files(src_dir, dest_dir)
+
+
+R.rename_files(dest_dir, flags_dict)
 
 if flags_dict['-x']:
     shutil.rmtree(src_dir, ignore_errors=True)
     print('Source directory successfuly removed.')
-
-R.rename_files(dest_dir, flags_dict)
 
 if flags_dict['-m']:
     directory = dest_dir + '\\photos'
