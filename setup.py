@@ -5,5 +5,5 @@ setup(
     author='Adam Zaiter',
     version='0.1',
     packages=['photosort'],
-    install_requires=['PIL', 'gmplot']
+    install_requires=['Pillow', 'gmplot']
 )
