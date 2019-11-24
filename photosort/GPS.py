@@ -1,5 +1,5 @@
 from PIL import Image, ExifTags
-import gmplot
+import folium
 import os
 
 
@@ -61,14 +61,11 @@ def get_GPS(dir):
 
 def get_map(list_of_converted_gps, dest_dir):
 
-    gmap = gmplot.GoogleMapPlotter(
-        list_of_converted_gps[0][0], list_of_converted_gps[0][1], 10)
-    # gmplot doesn't have functioning markers on windows, this is the solution to it'
-    gmap.coloricon = gmap.coloricon.replace('/', '\\').replace('\\', '\\\\')
+    gmap = folium.Map(location=[list_of_converted_gps[0]
+                                [0], list_of_converted_gps[0][1]], zoom_start=15)
 
     for elems in list_of_converted_gps:
-        gmap.marker(elems[0], elems[1],
-                    'cornflowerblue', title=elems[2])
+        folium.Marker([elems[0], elems[1]], popup=elems[2]).add_to(gmap)
     # Pass the absolute path
-    gmap.draw(dest_dir + '\\gpsmap.html')
+    gmap.save(dest_dir + '\\gpsmap.html')
     print('Google map drawn.')
