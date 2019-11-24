@@ -1,6 +1,10 @@
 from PIL import Image, ExifTags
 import folium
 import os
+SLASH = '\\'
+
+if os.name == 'posix':
+    SLASH = '/'
 
 
 def convert_gps_to_degrees(list_of_gps):
@@ -37,10 +41,10 @@ def convert_gps_to_degrees(list_of_gps):
 def get_GPS(dir):
     list_of = []
     for directory in os.listdir(dir):
-        sub_dir = dir + '\\' + directory
-        for filename in os.listdir(dir + '\\' + directory):
-            path = sub_dir + '\\' + filename
-            # print(path)
+        sub_dir = dir + SLASH + directory
+        for filename in os.listdir(dir + SLASH + directory):
+            path = sub_dir + SLASH + filename
+
             try:
                 img = Image.open(path)
                 exif = {ExifTags.TAGS[k]: v for k,
@@ -67,5 +71,5 @@ def get_map(list_of_converted_gps, dest_dir):
     for elems in list_of_converted_gps:
         folium.Marker([elems[0], elems[1]], popup=elems[2]).add_to(gmap)
     # Pass the absolute path
-    gmap.save(dest_dir + '\\gpsmap.html')
+    gmap.save(dest_dir + SLASH + 'gpsmap.html')
     print('Google map drawn.')

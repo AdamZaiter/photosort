@@ -5,6 +5,11 @@ from distutils.dir_util import copy_tree
 import rename as R
 import GPS
 
+SLASH = '\\'
+
+if os.name == 'posix':
+    SLASH = '/'
+
 
 def copy_files(src_dir, dest_dir):
     if os.path.isdir(src_dir):
@@ -63,7 +68,7 @@ if flags_dict['-x']:
     print('Source directory successfuly removed.')
 
 if flags_dict['-m']:
-    directory = dest_dir + '\\photos'
+    directory = dest_dir + SLASH + 'photos'
     list_of_gps = GPS.get_GPS(directory)
     if list_of_gps:
         list_of_degrees = GPS.convert_gps_to_degrees(list_of_gps)

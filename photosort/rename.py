@@ -1,6 +1,10 @@
 from PIL import Image
 import os
+import sys
 DATETag = 36867
+SLASH = '\\'
+if os.name == 'posix':
+    SLASH = '/'
 
 
 def get_date_taken(path):
@@ -20,8 +24,8 @@ def rename_files(dest_dir, flags_dict):
     used_file_names = []
     for filename in os.listdir(dest_dir):
         try:
-            with open(dest_dir + '\\' + filename, 'rb') as f:
-                date_taken = get_date_taken(dest_dir + '\\' + filename)
+            with open(dest_dir + SLASH + filename, 'rb') as f:
+                date_taken = get_date_taken(dest_dir + SLASH + filename)
                 if not date_taken:
                     number_string = '001'
                     file_name = 'photos/unknown/' + number_string + '.jpg'
@@ -38,7 +42,7 @@ def rename_files(dest_dir, flags_dict):
                             number_string = int(number_string) + 1
                             number_string = str(number_string)
                             file_name = 'photos/unknown/' + number_string + '.jpg'
-                    dest_dir_format = dest_dir + '\\' + filename
+                    dest_dir_format = dest_dir + SLASH + filename
                     used_file_names.append(file_name)
                     f.close()
                     os.renames(dest_dir_format, file_name)
@@ -57,32 +61,31 @@ def rename_files(dest_dir, flags_dict):
                     year = "".join(year)
 
                     number_string = '001'
-                    file_name = 'photos/' + year + '/' + \
+                    file_name = 'photos/' + year + SLASH + \
                         formatted_date + '-' + number_string + '.jpg'
 
                     while file_name in used_file_names:
                         if int(number_string) < 10:
                             number_string = int(number_string) + 1
                             number_string = '00' + str(number_string)
-                            file_name = 'photos/' + year + '/' + \
+                            file_name = 'photos/' + year + SLASH + \
                                 formatted_date + '-' + number_string + '.jpg'
                         elif int(number_string) < 100:
                             number_string = int(number_string) + 1
                             number_string = '0' + str(number_string)
-                            file_name = 'photos/' + year + '/' + \
+                            file_name = 'photos/' + year + SLASH + \
                                 formatted_date + '-' + number_string + '.jpg'
                         else:
                             number_string = int(number_string) + 1
                             number_string = str(number_string)
-                            file_name = 'photos/' + year + '/' + \
+                            file_name = 'photos/' + year + SLASH + \
                                 formatted_date + '-' + number_string + '.jpg'
 
                     used_file_names.append(file_name)
 
-                    dest_dir_format = dest_dir + '\\' + filename
+                    dest_dir_format = dest_dir + SLASH + filename
                     f.close()
                     os.renames(dest_dir_format, file_name)
-        except PermissionError:
+        except:
             print('Error. Permission denied. Try different directory.')
             sys.exit()
-
