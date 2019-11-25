@@ -1,3 +1,17 @@
+# Photosort
+
+Photosort is a Python CLI and GUI tool for sorting and archiving photos based on EXIF tags.
+
+## Installation
+
+**In terminal**
+
+```shell
+$ python setup.py install
+```
+
+**Executable file for Windows**
+
 You just run the photosort.exe file from the exe folder.
 
 ## Usage
@@ -23,4 +37,3 @@ $ python photosort.py
 ## Note
 
 The executable file for Windows doesn't have the 'draw a google map' functionality
-
