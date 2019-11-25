@@ -57,7 +57,7 @@ def gui_photosort():
                sg.Checkbox('Add a google map based on GPS data', key='check2')],
               [sg.Submit(), sg.Cancel()]]
 
-    window = sg.Window('Photosort', layout)
+    window = sg.Window('photosort', layout)
 
     event, values = window.read()
 
