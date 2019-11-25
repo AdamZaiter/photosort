@@ -1,6 +1,6 @@
-# Photosort
+# photosort
 
-Photosort is a Python CLI and GUI tool for sorting and archiving photos based on EXIF tags.
+photosort is a Python CLI and GUI tool for sorting and archiving photos based on EXIF tags.
 
 ## Installation
 
