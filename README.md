@@ -34,6 +34,9 @@ Example:
 ```shell
 $ python photosort.py
 ```
+
+![photosort](https://user-images.githubusercontent.com/39188731/69559441-3ec24f00-0faa-11ea-88b8-4ab85d618802.png)
+
 ## Note
 
 The executable file for Windows doesn't have the 'draw a google map' functionality
