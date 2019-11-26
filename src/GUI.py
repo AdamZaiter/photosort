@@ -2,9 +2,9 @@ import PySimpleGUI as sg
 import sys
 import os
 import shutil
-from distutils.dir_util import copy_tree
 import rename as R
 import GPS
+
 
 SLASH = '\\'
 
@@ -13,10 +13,27 @@ if os.name == 'posix':
 
 
 def copy_files(src_dir, dest_dir):
+
     if os.path.isdir(src_dir):
 
-        copy_tree(src_dir, dest_dir)
-        print('Files successfuly copied to destination directory.')
+        i, counter = 0, 0
+        #copy_tree(src_dir, dest_dir)
+        if not os.path.exists(dest_dir):
+            os.mkdir(dest_dir)
+
+        for (dirpath, dirnames, filenames) in os.walk(src_dir):
+
+            for filename in filenames:
+                counter += 1
+        for (dirpath, dirnames, filenames) in os.walk(src_dir):
+
+            for filename in filenames:
+                print(f'{filename} is being copied.')
+
+                shutil.copy2(src_dir + '/' + filename, dest_dir)
+                i += 1
+                sg.OneLineProgressMeter(
+                    'My Meter', i, counter, 'key', 'Optional message')
 
     else:
         print('Invalid source directory')
@@ -113,4 +130,4 @@ if __name__ == '__main__':
 
     R.rename_files(dest_dir, flags_dict)
     sg.popup('Files successfuly copied to destination directory and renamed.')
-    flag_handling(flags_dict)
+    flag_handling(flags_dict, dest_dir)
