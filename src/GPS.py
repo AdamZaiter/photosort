@@ -72,7 +72,7 @@ def get_map(list_of_converted_gps, dest_dir):
     avg_lon = sum(x[1] for x in list_of_converted_gps) / \
         len(list_of_converted_gps)
 
-    gmap = folium.Map(location=[avg_lon, avg_lat], zoom_start=9)
+    gmap = folium.Map(location=[avg_lat, avg_lon], zoom_start=9)
     for elems in list_of_converted_gps:
         folium.Marker([elems[0], elems[1]], tooltip=elems[2],
                       popup=str(elems[0]) + ', ' + str(elems[1])).add_to(gmap)

@@ -56,7 +56,7 @@ def flag_handling(flags_dict):
 
 flags_dict = {'-x': False, '-m': False}
 
-sys.argv
+
 if len(sys.argv) == 1:
     GUI.gui_photosort()
     sys.exit()
