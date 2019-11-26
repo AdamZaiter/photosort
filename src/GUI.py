@@ -49,7 +49,7 @@ def copy_files(src_dir, dest_dir):
     return counter
 
 
-def flag_handling(flags_dict, dest_dir):
+def flag_handling(flags_dict, src_dir, dest_dir):
     if flags_dict['-x']:
         shutil.rmtree(src_dir, ignore_errors=True)
         sg.popup('Source directory successfuly removed.')
@@ -93,11 +93,9 @@ def gui_photosort():
     if src_dir == dest_dir:
         sg.popup('Directories cannot be the same!')
         sys.exit()
-        
-    copy_files(src_dir, dest_dir)
 
-    R.rename_files(dest_dir, flags_dict)
+    num_of_files = copy_files(src_dir, dest_dir)
+
+    R.rename_files(dest_dir, flags_dict, gui, num_of_files)
     sg.popup('Files successfuly copied to destination directory and renamed.')
-    flag_handling(flags_dict, dest_dir)
-
-
+    flag_handling(flags_dict, src_dir, dest_dir)
