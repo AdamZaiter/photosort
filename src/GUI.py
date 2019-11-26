@@ -2,9 +2,9 @@ import PySimpleGUI as sg
 import sys
 import os
 import shutil
-from distutils.dir_util import copy_tree
 import rename as R
 import GPS
+
 
 SLASH = '\\'
 
@@ -13,18 +13,40 @@ if os.name == 'posix':
 
 
 def copy_files(src_dir, dest_dir):
+
     if os.path.isdir(src_dir):
 
-        copy_tree(src_dir, dest_dir)
-        print('Files successfuly copied to destination directory.')
+        i, counter = 0, 0
+
+        if not os.path.exists(dest_dir):
+            try:
+                os.mkdir(dest_dir)
+            except FileNotFoundError:
+                sg.popup("Directory couldn't be accessed or created")
+                sys.exit()
+        if not os.path.isdir(dest_dir):
+            sg.popup('Destination folder couldn\'t be accessed or created')
+            sys.exit()
+
+        for (dirpath, dirnames, filenames) in os.walk(src_dir):
+
+            for filename in filenames:
+                counter += 1
+        for (dirpath, dirnames, filenames) in os.walk(src_dir):
+
+            for filename in filenames:
+                print(f'{filename} is being copied.')
+
+                shutil.copy2(src_dir + '/' + filename, dest_dir)
+                i += 1
+                sg.OneLineProgressMeter(
+                    'photosort', i, counter, 'key', 'Copying files')
 
     else:
-        print('Invalid source directory')
+        sg.popup('Invalid source directory')
         sys.exit()
 
-    if not os.path.isdir(dest_dir):
-        print('Destination folder couldn\'t be accessed or created')
-        sys.exit()
+    return counter
 
 
 def flag_handling(flags_dict, dest_dir):
@@ -45,7 +67,7 @@ def flag_handling(flags_dict, dest_dir):
 
 def gui_photosort():
     flags_dict = {'-x': False, '-m': False}
-
+    gui = True
     sg.change_look_and_feel('Dark')
 
     layout = [[sg.Text('Enter 2 folders')],
@@ -71,7 +93,7 @@ def gui_photosort():
     if src_dir == dest_dir:
         sg.popup('Directories cannot be the same!')
         sys.exit()
-
+        
     copy_files(src_dir, dest_dir)
 
     R.rename_files(dest_dir, flags_dict)
@@ -79,38 +101,3 @@ def gui_photosort():
     flag_handling(flags_dict, dest_dir)
 
 
-if __name__ == '__main__':
-
-    flags_dict = {'-x': False, '-m': False}
-
-    sg.change_look_and_feel('Dark')
-
-    layout = [[sg.Text('Enter 2 folders')],
-              [sg.Text('Folder to copy', size=(15, 1)),
-               sg.Input(), sg.FolderBrowse()],
-              [sg.Text('Folder where to copy', size=(15, 1)),
-               sg.Input(), sg.FolderBrowse()],
-              [sg.Checkbox('Remove source directory', size=(20, 1), key='check1'),
-               sg.Checkbox('Add a google map based on GPS data', key='check2')],
-              [sg.Submit(), sg.Cancel()]]
-
-    window = sg.Window('photosort', layout)
-
-    event, values = window.read()
-
-    window.close()
-    src_dir = values[0]
-    dest_dir = values[1]
-    flags_dict['-x'] = values['check1']
-    flags_dict['-m'] = values['check2']
-    if event in (None, 'Cancel'):
-        sys.exit()
-    if src_dir == dest_dir:
-        sg.popup('Directories cannot be the same!')
-        sys.exit()
-
-    copy_files(src_dir, dest_dir)
-
-    R.rename_files(dest_dir, flags_dict)
-    sg.popup('Files successfuly copied to destination directory and renamed.')
-    flag_handling(flags_dict)

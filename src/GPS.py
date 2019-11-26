@@ -1,6 +1,8 @@
 from PIL import Image, ExifTags
 import folium
 import os
+
+
 SLASH = '\\'
 
 if os.name == 'posix':
@@ -65,11 +67,16 @@ def get_GPS(dir):
 
 def get_map(list_of_converted_gps, dest_dir):
 
-    gmap = folium.Map(location=[list_of_converted_gps[0]
-                                [0], list_of_converted_gps[0][1]], zoom_start=15)
+    avg_lat = sum(x[0] for x in list_of_converted_gps) / \
+        len(list_of_converted_gps)
+    avg_lon = sum(x[1] for x in list_of_converted_gps) / \
+        len(list_of_converted_gps)
 
+    gmap = folium.Map(location=[avg_lon, avg_lat], zoom_start=9)
     for elems in list_of_converted_gps:
-        folium.Marker([elems[0], elems[1]], popup=elems[2]).add_to(gmap)
+        folium.Marker([elems[0], elems[1]], tooltip=elems[2],
+                      popup=str(elems[0]) + ', ' + str(elems[1])).add_to(gmap)
+
     # Pass the absolute path
     gmap.save(dest_dir + SLASH + 'gpsmap.html')
     print('Google map drawn.')

@@ -1,7 +1,6 @@
 import sys
 import os
 import shutil
-from distutils.dir_util import copy_tree
 import rename as R
 import GPS
 import GUI
@@ -16,16 +15,28 @@ if os.name == 'posix':
 def copy_files(src_dir, dest_dir):
     if os.path.isdir(src_dir):
 
-        copy_tree(src_dir, dest_dir)
-        print('Files successfuly copied to destination directory.')
+        if not os.path.exists(dest_dir):
+            try:
+                os.mkdir(dest_dir)
+            except FileNotFoundError:
+                print("Directory couldn't be accessed or created.")
+                sys.exit()
+        if not os.path.isdir(dest_dir):
+            print('Destination folder couldn\'t be accessed or created.')
+            sys.exit()
+
+        for (dirpath, dirnames, filenames) in os.walk(src_dir):
+
+            for filename in filenames:
+                print(f'{filename} is being copied.')
+
+                shutil.copy2(src_dir + '/' + filename, dest_dir)
 
     else:
-        print('Invalid source directory')
+        print('Invalid source directory.')
         sys.exit()
 
-    if not os.path.isdir(dest_dir):
-        print('Destination folder couldn\'t be accessed or created')
-        sys.exit()
+    print('Files successfuly copied.')
 
 
 def flag_handling(flags_dict):
@@ -61,7 +72,7 @@ if sys.argv[1] == '--help':
 elif len(sys.argv) < 3:
     print('Usage: movefiles.py source_folder destination_folder')
     print('For additional flags info type --help')
-
+gui = False
 
 # checking for flags in args
 for i in range(3, len(sys.argv)):
@@ -79,6 +90,7 @@ if src_dir == dest_dir:
 
 copy_files(src_dir, dest_dir)
 
-R.rename_files(dest_dir, flags_dict)
+R.rename_files(dest_dir, flags_dict, gui)
+print('Files renamed.')
 
 flag_handling(flags_dict)
