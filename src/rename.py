@@ -1,6 +1,8 @@
 from PIL import Image
 import os
 import sys
+import PySimpleGUI as sg
+
 DATETag = 36867
 SLASH = '\\'
 if os.name == 'posix':
@@ -19,9 +21,10 @@ def get_date_taken(path):
         pass
 
 
-def rename_files(dest_dir, flags_dict):
+def rename_files(dest_dir, flags_dict, gui, num_of_files=0):
     os.chdir(dest_dir)
     used_file_names = []
+    i = 0
     for filename in os.listdir(dest_dir):
         try:
             with open(dest_dir + SLASH + filename, 'rb') as f:
@@ -86,6 +89,13 @@ def rename_files(dest_dir, flags_dict):
                     dest_dir_format = dest_dir + SLASH + filename
                     f.close()
                     os.renames(dest_dir_format, file_name)
+                i += 1
+                if gui:
+                    sg.OneLineProgressMeter(
+                        'My Meter', i, num_of_files, 'key', 'Renaming files')
         except:
-            print('Error. Permission denied. Try different directory.')
+            if gui:
+                sg.popup('Error. Permission denied. Try different directory.')
+            else:
+                print('Error. Permission denied. Try different directory.')
             sys.exit()

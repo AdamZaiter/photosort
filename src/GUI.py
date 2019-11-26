@@ -4,6 +4,7 @@ import os
 import shutil
 import rename as R
 import GPS
+import time
 
 
 SLASH = '\\'
@@ -19,7 +20,14 @@ def copy_files(src_dir, dest_dir):
         i, counter = 0, 0
         #copy_tree(src_dir, dest_dir)
         if not os.path.exists(dest_dir):
-            os.mkdir(dest_dir)
+            try:
+                os.mkdir(dest_dir)
+            except FileNotFoundError:
+                sg.popup("Directory couldn't be accessed or created")
+                sys.exit()
+        if not os.path.isdir(dest_dir):
+            sg.popup('Destination folder couldn\'t be accessed or created')
+            sys.exit()
 
         for (dirpath, dirnames, filenames) in os.walk(src_dir):
 
@@ -33,15 +41,13 @@ def copy_files(src_dir, dest_dir):
                 shutil.copy2(src_dir + '/' + filename, dest_dir)
                 i += 1
                 sg.OneLineProgressMeter(
-                    'My Meter', i, counter, 'key', 'Optional message')
+                    'My Meter', i, counter, 'key', 'Copying files')
 
     else:
-        print('Invalid source directory')
+        sg.popup('Invalid source directory')
         sys.exit()
 
-    if not os.path.isdir(dest_dir):
-        print('Destination folder couldn\'t be accessed or created')
-        sys.exit()
+    return counter
 
 
 def flag_handling(flags_dict, dest_dir):
@@ -62,7 +68,7 @@ def flag_handling(flags_dict, dest_dir):
 
 def gui_photosort():
     flags_dict = {'-x': False, '-m': False}
-
+    gui = True
     sg.change_look_and_feel('Dark')
 
     layout = [[sg.Text('Enter 2 folders')],
@@ -89,9 +95,10 @@ def gui_photosort():
         sg.popup('Directories cannot be the same!')
         sys.exit()
 
-    copy_files(src_dir, dest_dir)
+    num_of_files = copy_files(src_dir, dest_dir)
+    
+    R.rename_files(dest_dir, flags_dict, gui, num_of_files)
 
-    R.rename_files(dest_dir, flags_dict)
     sg.popup('Files successfuly copied to destination directory and renamed.')
     flag_handling(flags_dict, dest_dir)
 
@@ -126,8 +133,8 @@ if __name__ == '__main__':
         sg.popup('Directories cannot be the same!')
         sys.exit()
 
-    copy_files(src_dir, dest_dir)
+    num_of_files = copy_files(src_dir, dest_dir)
 
-    R.rename_files(dest_dir, flags_dict)
+    R.rename_files(dest_dir, flags_dict, num_of_files)
     sg.popup('Files successfuly copied to destination directory and renamed.')
     flag_handling(flags_dict, dest_dir)

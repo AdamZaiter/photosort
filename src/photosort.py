@@ -61,7 +61,7 @@ if sys.argv[1] == '--help':
 elif len(sys.argv) < 3:
     print('Usage: movefiles.py source_folder destination_folder')
     print('For additional flags info type --help')
-
+gui = False
 
 # checking for flags in args
 for i in range(3, len(sys.argv)):
@@ -79,6 +79,6 @@ if src_dir == dest_dir:
 
 copy_files(src_dir, dest_dir)
 
-R.rename_files(dest_dir, flags_dict)
+R.rename_files(dest_dir, flags_dict, gui)
 
 flag_handling(flags_dict)
