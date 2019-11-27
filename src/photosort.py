@@ -1,32 +1,21 @@
 import sys
 import os
 import shutil
-import rename as R
+import rename
 import GPS
 import GUI
 
 
-SLASH = '\\'
-
-if os.name == 'posix':
-    SLASH = '/'
-
-
 def copy_files(src_dir, dest_dir):
     if os.path.isdir(src_dir):
-
         if not os.path.exists(dest_dir):
             try:
                 os.mkdir(dest_dir)
-            except FileNotFoundError:
-                print("Directory couldn't be accessed or created.")
+            except:
+                print("Destination directory couldn't be accessed or created.")
                 sys.exit()
-        if not os.path.isdir(dest_dir):
-            print('Destination folder couldn\'t be accessed or created.')
-            sys.exit()
 
         for (dirpath, dirnames, filenames) in os.walk(src_dir):
-
             for filename in filenames:
                 print(f'{filename} is being copied.')
 
@@ -34,6 +23,7 @@ def copy_files(src_dir, dest_dir):
 
     else:
         print('Invalid source directory.')
+        print('Usage: movefiles.py source_folder destination_folder')
         sys.exit()
 
     print('Files successfuly copied.')
@@ -45,7 +35,7 @@ def flag_handling(flags_dict):
         print('Source directory successfuly removed.')
 
     if flags_dict['-m']:
-        directory = dest_dir + SLASH + 'photos'
+        directory = dest_dir + '/' + 'photos'
         list_of_gps = GPS.get_GPS(directory)
         if list_of_gps:
             list_of_degrees = GPS.convert_gps_to_degrees(list_of_gps)
@@ -55,8 +45,6 @@ def flag_handling(flags_dict):
 
 
 flags_dict = {'-x': False, '-m': False}
-
-
 if len(sys.argv) == 1:
     GUI.gui_photosort()
     sys.exit()
@@ -66,20 +54,23 @@ if len(sys.argv) < 3 and sys.argv[1] != '--help':
     sys.exit()
 
 if sys.argv[1] == '--help':
+    print('Usage: movefiles.py source_folder destination_folder')
     print('Flags:\n-x  removes source directory after copying files')
     print('-m  creates a google map with GPS coordinates of photos')
     sys.exit()
 elif len(sys.argv) < 3:
     print('Usage: movefiles.py source_folder destination_folder')
     print('For additional flags info type --help')
-gui = False
 
+gui = False
 # checking for flags in args
 for i in range(3, len(sys.argv)):
     if sys.argv[i] in flags_dict:
         flags_dict[sys.argv[i]] = True
     else:
-        print('You used an invalid flag.\nType --help for list of commands.')
+        print('You used an invalid flag.')
+        print('Usage: movefiles.py source_folder destination_folder')
+        print('For additional flags info type photosort.py --help')
         sys.exit()
 
 src_dir = (sys.argv[1])
@@ -90,7 +81,6 @@ if src_dir == dest_dir:
 
 copy_files(src_dir, dest_dir)
 
-R.rename_files(dest_dir, flags_dict, gui)
+rename.rename_files(dest_dir, flags_dict, gui)
 print('Files renamed.')
-
 flag_handling(flags_dict)

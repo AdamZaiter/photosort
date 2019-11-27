@@ -3,12 +3,6 @@ import folium
 import os
 
 
-SLASH = '\\'
-
-if os.name == 'posix':
-    SLASH = '/'
-
-
 def convert_gps_to_degrees(list_of_gps):
     list_of_degrees = []
     for l in list_of_gps:
@@ -37,16 +31,16 @@ def convert_gps_to_degrees(list_of_gps):
         conv_lng = long_degree + long_minute + long_second
         conv_list = [conv_lat, conv_lng, filename]
         list_of_degrees.append(conv_list)
+
     return list_of_degrees
 
 
 def get_GPS(dir):
-    list_of = []
+    list_of_gps_info = []
     for directory in os.listdir(dir):
-        sub_dir = dir + SLASH + directory
-        for filename in os.listdir(dir + SLASH + directory):
-            path = sub_dir + SLASH + filename
-
+        sub_dir = dir + '/' + directory
+        for filename in os.listdir(dir + '/' + directory):
+            path = sub_dir + '/' + filename
             try:
                 img = Image.open(path)
                 exif = {ExifTags.TAGS[k]: v for k,
@@ -58,15 +52,15 @@ def get_GPS(dir):
                 latitude = gpsinfo['GPSLatitude']
                 longitude = gpsinfo['GPSLongitude']
                 sub_list = [latitude, longitude, filename]
-                list_of.append(sub_list)
+                list_of_gps_info.append(sub_list)
             except:
                 pass
 
-    return list_of
+    return list_of_gps_info
 
 
 def get_map(list_of_converted_gps, dest_dir):
-
+    # Calculating avg coordinates to center the map
     avg_lat = sum(x[0] for x in list_of_converted_gps) / \
         len(list_of_converted_gps)
     avg_lon = sum(x[1] for x in list_of_converted_gps) / \
@@ -77,6 +71,5 @@ def get_map(list_of_converted_gps, dest_dir):
         folium.Marker([elems[0], elems[1]], tooltip=elems[2],
                       popup=str(elems[0]) + ', ' + str(elems[1])).add_to(gmap)
 
-    # Pass the absolute path
-    gmap.save(dest_dir + SLASH + 'gpsmap.html')
+    gmap.save(dest_dir + '/' + 'gpsmap.html')
     print('Google map drawn.')
