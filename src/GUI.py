@@ -6,7 +6,10 @@ import rename
 import GPS
 
 
-def copy_files(src_dir, dest_dir):
+def copy_files(src_dir: str, dest_dir: str) -> None:
+    '''
+    Copies files into existing directory or creates a new one.
+    '''
     if os.path.isdir(src_dir):
         progress, counter_of_files = 0, 0
         if not os.path.exists(dest_dir):
@@ -35,7 +38,10 @@ def copy_files(src_dir, dest_dir):
     return counter_of_files
 
 
-def flag_handling(flags_dict, dest_dir):
+def flag_handling(flags_dict: dict, src_dir: str, dest_dir: str) -> None:
+    '''
+    Goes through flags and executes their functions.
+    '''
     if flags_dict['-x']:
         shutil.rmtree(src_dir, ignore_errors=True)
         sg.popup('Source directory successfuly removed.')
@@ -52,7 +58,10 @@ def flag_handling(flags_dict, dest_dir):
             sg.popup('GPS coordinates couldn\'t be retrieved.')
 
 
-def gui_photosort():
+def gui_photosort() -> None:
+    '''
+    Executes script in a GUI.
+    '''
     gui = True
     flags_dict = {'-x': False, '-m': False}
     sg.change_look_and_feel('Dark')
@@ -82,4 +91,4 @@ def gui_photosort():
     rename.rename_files(dest_dir, flags_dict, gui, num_of_files)
     sg.popup('Files successfuly copied to destination directory and renamed.')
 
-    flag_handling(flags_dict, dest_dir)
+    flag_handling(flags_dict, src_dir, dest_dir)

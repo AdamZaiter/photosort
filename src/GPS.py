@@ -3,7 +3,10 @@ import folium
 import os
 
 
-def convert_gps_to_degrees(list_of_gps):
+def convert_gps_to_degrees(list_of_gps: list) -> list:
+    '''
+    Converts decimal GPS coordinates to degrees
+    '''
     list_of_degrees = []
     for l in list_of_gps:
         latitude = l[0]
@@ -35,11 +38,15 @@ def convert_gps_to_degrees(list_of_gps):
     return list_of_degrees
 
 
-def get_GPS(dir):
+def get_GPS(src_dir: str) -> list:
+    '''
+    Extracts GPS info from photos in a directory.
+    Returns GPS coordinates in decimals.
+    '''
     list_of_gps_info = []
-    for directory in os.listdir(dir):
-        sub_dir = dir + '/' + directory
-        for filename in os.listdir(dir + '/' + directory):
+    for directory in os.listdir(src_dir):
+        sub_dir = src_dir + '/' + directory
+        for filename in os.listdir(src_dir + '/' + directory):
             path = sub_dir + '/' + filename
             try:
                 img = Image.open(path)
@@ -59,7 +66,11 @@ def get_GPS(dir):
     return list_of_gps_info
 
 
-def get_map(list_of_converted_gps, dest_dir):
+def get_map(list_of_converted_gps: list, output_dir: str) -> None:
+    '''
+    Draws an openstreet map and creates .html file.
+    '''
+
     # Calculating avg coordinates to center the map
     avg_lat = sum(x[0] for x in list_of_converted_gps) / \
         len(list_of_converted_gps)
@@ -71,5 +82,5 @@ def get_map(list_of_converted_gps, dest_dir):
         folium.Marker([elems[0], elems[1]], tooltip=elems[2],
                       popup=str(elems[0]) + ', ' + str(elems[1])).add_to(gmap)
 
-    gmap.save(dest_dir + '/' + 'gpsmap.html')
+    gmap.save(output_dir + '/' + 'gpsmap.html')
     print('Google map drawn.')

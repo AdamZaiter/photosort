@@ -6,7 +6,10 @@ import GPS
 import GUI
 
 
-def copy_files(src_dir, dest_dir):
+def copy_files(src_dir: str, dest_dir: str) -> None:
+    '''
+    Copies files into existing directory or creates a new one.
+    '''
     if os.path.isdir(src_dir):
         if not os.path.exists(dest_dir):
             try:
@@ -29,7 +32,10 @@ def copy_files(src_dir, dest_dir):
     print('Files successfuly copied.')
 
 
-def flag_handling(flags_dict):
+def flag_handling(flags_dict: dict) -> None:
+    '''
+    Goes through flags and executes their functions.
+    '''
     if flags_dict['-x']:
         shutil.rmtree(src_dir, ignore_errors=True)
         print('Source directory successfuly removed.')

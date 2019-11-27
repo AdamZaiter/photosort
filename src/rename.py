@@ -4,7 +4,10 @@ import sys
 import PySimpleGUI as sg
 
 
-def get_date_taken(path):
+def get_date_taken(path: str) -> None:
+    '''
+    Returns a date when image was taken.
+    '''
     DATETag = 36867
     try:
         img = Image.open(path)
@@ -17,7 +20,11 @@ def get_date_taken(path):
         pass
 
 
-def rename_files(dest_dir, flags_dict, gui, num_of_files=0):
+def rename_files(dest_dir: str, flags_dict: dict, gui: bool, num_of_files=0) -> None:
+    '''
+    Organizes files into photos/year(unknown), then renames files
+    with a format YYYY-MM-DD-XXX
+    '''
     os.chdir(dest_dir)
     used_file_names = []
     progress = 0
@@ -49,9 +56,8 @@ def rename_files(dest_dir, flags_dict, gui, num_of_files=0):
                 sys.exit()
 
         else:
-            date_taken = str(date_taken)
             year = date_taken[0:4]
-            formatted_date = str(date_taken.replace(':', '-'))
+            formatted_date = date_taken.replace(':', '-')
             list_date_time = formatted_date.split()
             date = list_date_time[0]
             number_string = '001'
