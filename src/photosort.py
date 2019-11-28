@@ -87,6 +87,6 @@ if src_dir == dest_dir:
 
 copy_files(src_dir, dest_dir)
 
-rename.rename_files(dest_dir, flags_dict, gui)
+rename.rename_files(dest_dir, gui)
 print('Files renamed.')
 flag_handling(flags_dict)

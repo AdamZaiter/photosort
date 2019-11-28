@@ -6,7 +6,7 @@ import rename
 import GPS
 
 
-def copy_files(src_dir: str, dest_dir: str) -> None:
+def copy_files_gui(src_dir: str, dest_dir: str) -> None:
     '''
     Copies files into existing directory or creates a new one.
     '''
@@ -38,7 +38,7 @@ def copy_files(src_dir: str, dest_dir: str) -> None:
     return counter_of_files
 
 
-def flag_handling(flags_dict: dict, src_dir: str, dest_dir: str) -> None:
+def flag_handling_gui(flags_dict: dict, src_dir: str, dest_dir: str) -> None:
     '''
     Goes through flags and executes their functions.
     '''
@@ -52,7 +52,7 @@ def flag_handling(flags_dict: dict, src_dir: str, dest_dir: str) -> None:
         if list_of_gps:
             list_of_degrees = GPS.convert_gps_to_degrees(list_of_gps)
             GPS.get_map(list_of_degrees, dest_dir)
-            sg.popup('Google map drawn.')
+            sg.popup('Google map drawn.', title='Success')
 
         else:
             sg.popup('GPS coordinates couldn\'t be retrieved.')
@@ -86,9 +86,10 @@ def gui_photosort() -> None:
         sg.popup('Directories cannot be the same!')
         sys.exit()
 
-    num_of_files = copy_files(src_dir, dest_dir)
+    num_of_files = copy_files_gui(src_dir, dest_dir)
 
-    rename.rename_files(dest_dir, flags_dict, gui, num_of_files)
-    sg.popup('Files successfuly copied to destination directory and renamed.')
+    rename.rename_files(dest_dir, gui, num_of_files)
+    sg.popup(
+        'Files successfuly copied to destination directory and renamed.', title='Success')
 
-    flag_handling(flags_dict, src_dir, dest_dir)
+    flag_handling_gui(flags_dict, src_dir, dest_dir)

@@ -20,7 +20,7 @@ def get_date_taken(path: str) -> None:
         pass
 
 
-def rename_files(dest_dir: str, flags_dict: dict, gui: bool, num_of_files=0) -> None:
+def rename_files(dest_dir: str, gui: bool, num_of_files=0) -> None:
     '''
     Organizes files into photos/year(unknown), then renames files
     with a format YYYY-MM-DD-XXX
