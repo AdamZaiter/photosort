@@ -18,7 +18,7 @@ You just run the photosort.exe file from the exe folder.
 
 **CLI**
 
-```shell
+```
 $ python photosort.py source_directory destination_directory
 
 Options:
