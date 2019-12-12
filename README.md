@@ -6,7 +6,7 @@ photosort is a Python CLI and GUI tool for sorting and archiving photos based on
 
 **In terminal**
 
-```shell
+```
 $ python setup.py install
 ```
 
@@ -31,7 +31,7 @@ Example:
 ```
 **CLI with GUI**
 
-```shell
+```
 $ python photosort.py
 ```
 
