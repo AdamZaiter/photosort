@@ -1,3 +1,7 @@
 ICA2venv/
 settings.json
 __pycache__/
+VENV
+photosort.egg-info
+build
+dist

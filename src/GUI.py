@@ -25,7 +25,6 @@ def copy_files_gui(src_dir: str, dest_dir: str) -> None:
                 counter_of_files += 1
         for (dirpath, dirnames, filenames) in os.walk(src_dir):
             for filename in filenames:
-                print(f'{filename} is being copied.')
                 shutil.copy2(src_dir + '/' + filename, dest_dir)
                 progress += 1
                 sg.OneLineProgressMeter(

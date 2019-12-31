@@ -4,9 +4,10 @@ import shutil
 import rename
 import GPS
 import GUI
+import argparse
 
 
-def copy_files(src_dir: str, dest_dir: str) -> None:
+def copy_files(src_dir: str, dest_dir: str, verbose: bool) -> None:
     '''
     Copies files into existing directory or creates a new one.
     '''
@@ -20,9 +21,14 @@ def copy_files(src_dir: str, dest_dir: str) -> None:
 
         for (dirpath, dirnames, filenames) in os.walk(src_dir):
             for filename in filenames:
-                print(f'{filename} is being copied.')
+                if verbose:
+                    print(f'{filename} is being copied.')
 
-                shutil.copy2(src_dir + '/' + filename, dest_dir)
+                try:
+                    shutil.copy2(src_dir + '/' + filename, dest_dir)
+                except FileNotFoundError:
+                    print('File not found.')
+                    sys.exit()
 
     else:
         print('Invalid source directory.')
@@ -32,15 +38,15 @@ def copy_files(src_dir: str, dest_dir: str) -> None:
     print('Files successfuly copied.')
 
 
-def flag_handling(flags_dict: dict) -> None:
+def flag_handling() -> None:
     '''
     Goes through flags and executes their functions.
     '''
-    if flags_dict['-x']:
+    if args.remove:
         shutil.rmtree(src_dir, ignore_errors=True)
         print('Source directory successfuly removed.')
 
-    if flags_dict['-m']:
+    if args.map:
         directory = dest_dir + '/' + 'photos'
         list_of_gps = GPS.get_GPS(directory)
         if list_of_gps:
@@ -50,43 +56,28 @@ def flag_handling(flags_dict: dict) -> None:
             print('GPS coordinates couldn\'t be retrieved.')
 
 
-flags_dict = {'-x': False, '-m': False}
 if len(sys.argv) == 1:
     GUI.gui_photosort()
     sys.exit()
-if len(sys.argv) < 3 and sys.argv[1] != '--help':
-    print('Usage: movefiles.py source_folder destination_folder')
-    print('For additional commands info type --help')
-    sys.exit()
-
-if sys.argv[1] == '--help':
-    print('Usage: movefiles.py source_folder destination_folder')
-    print('Flags:\n-x  removes source directory after copying files')
-    print('-m  creates a google map with GPS coordinates of photos')
-    sys.exit()
-elif len(sys.argv) < 3:
-    print('Usage: movefiles.py source_folder destination_folder')
-    print('For additional flags info type --help')
-
+parser = argparse.ArgumentParser(
+    description='Copy photos from one folder to another and rename them')
+parser.add_argument('src_dir')
+parser.add_argument('dest_dir')
+parser.add_argument('-x', '--remove', action='store_true',
+                    help='Removes source directory after copying files')
+parser.add_argument('-m', '--map', action='store_true',
+                    help='Creates a google map with GPS coordinates of photos')
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help='Adds verbosity')
+args = parser.parse_args()
 gui = False
-# checking for flags in args
-for i in range(3, len(sys.argv)):
-    if sys.argv[i] in flags_dict:
-        flags_dict[sys.argv[i]] = True
-    else:
-        print('You used an invalid flag.')
-        print('Usage: movefiles.py source_folder destination_folder')
-        print('For additional flags info type photosort.py --help')
-        sys.exit()
+print(type(args))
+src_dir = args.src_dir
+dest_dir = args.dest_dir
 
-src_dir = (sys.argv[1])
-dest_dir = (sys.argv[2])
-if src_dir == dest_dir:
-    print('Directories cannot be the same!')
-    sys.exit()
 
-copy_files(src_dir, dest_dir)
+copy_files(src_dir, dest_dir, args.verbose)
 
 rename.rename_files(dest_dir, gui)
 print('Files renamed.')
-flag_handling(flags_dict)
+flag_handling()
