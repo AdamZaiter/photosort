@@ -18,6 +18,11 @@ def copy_files(src_dir: str, dest_dir: str, verbose: bool) -> None:
             except:
                 print("Destination directory couldn't be accessed or created.")
                 sys.exit()
+        try:
+            os.listdir(dest_dir)
+        except FileNotFoundError:
+            print('Invalid destination directory.')
+            sys.exit()
 
         for (dirpath, dirnames, filenames) in os.walk(src_dir):
             for filename in filenames:
@@ -32,7 +37,6 @@ def copy_files(src_dir: str, dest_dir: str, verbose: bool) -> None:
 
     else:
         print('Invalid source directory.')
-        print('Usage: movefiles.py source_folder destination_folder')
         sys.exit()
 
     print('Files successfuly copied.')
@@ -59,19 +63,21 @@ def flag_handling() -> None:
 if len(sys.argv) == 1:
     GUI.gui_photosort()
     sys.exit()
+else:
+    gui = False
+
 parser = argparse.ArgumentParser(
     description='Copy photos from one folder to another and rename them')
 parser.add_argument('src_dir')
 parser.add_argument('dest_dir')
 parser.add_argument('-x', '--remove', action='store_true',
-                    help='Removes source directory after copying files')
+                    help='removes source directory after copying files')
 parser.add_argument('-m', '--map', action='store_true',
-                    help='Creates a google map with GPS coordinates of photos')
+                    help='creates a google map with GPS coordinates of photos')
 parser.add_argument('-v', '--verbose', action='store_true',
-                    help='Adds verbosity')
+                    help='adds verbosity')
 args = parser.parse_args()
-gui = False
-print(type(args))
+
 src_dir = args.src_dir
 dest_dir = args.dest_dir
 

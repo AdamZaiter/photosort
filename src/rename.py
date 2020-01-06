@@ -28,6 +28,11 @@ def rename_files(dest_dir: str, gui: bool, num_of_files=0) -> None:
     os.chdir(dest_dir)
     used_file_names = []
     progress = 0
+    try:
+        os.listdir(dest_dir)
+    except FileNotFoundError:
+        print('Destination directory was not found. Be sure to use absolute paths.')
+        sys.exit()
     for old_file_name in os.listdir(dest_dir):
         path_to_image = dest_dir + '/' + old_file_name
         date_taken = get_date_taken(path_to_image)
