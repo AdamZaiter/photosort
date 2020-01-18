@@ -25,6 +25,7 @@ Options:
   --help  Show help
   -x      Removes source directory
   -m      Draws a google map with markers for coordinates of the photos
+  -v      Adds verbosity
 
 Example:
   python photosort.py C:\\Documents\\folder1 C:\\Documents\\folder2 -x -m
