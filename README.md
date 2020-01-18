@@ -25,6 +25,7 @@ Options:
   --help  Show help
   -x      Removes source directory
   -m      Draws a google map with markers for coordinates of the photos
+          When a marker is clicked, GPS coordinates are shown.
   -v      Adds verbosity
 
 Example:
