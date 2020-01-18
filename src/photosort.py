@@ -20,7 +20,7 @@ def copy_files(src_dir: str, dest_dir: str, verbose: bool) -> None:
                 sys.exit()
         try:
             os.listdir(dest_dir)
-        except FileNotFoundError:
+        except:
             print('Invalid destination directory.')
             sys.exit()
 
