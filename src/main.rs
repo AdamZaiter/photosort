@@ -32,14 +32,15 @@ fn main() {
 fn help() {
     println!("Usage: [src_dir] [dest_dir]");
 }
+
 fn copy_files(src_dir: &String, dest_dir: &String) -> Result<()> {
     let paths_count = fs::read_dir(src_dir).unwrap();
     let mut num_of_files: u32 = 0;
     let mut copied_files: u32 = 0;
     for file in paths_count {
-        let f_p = file.unwrap().path();
-        let f_n = format!("{}", f_p.display());
-        if f_n.ends_with(".jpg") {
+        let temp_fpath = file.unwrap().path();
+        let temp_fname = format!("{}", temp_fpath.display());
+        if temp_fname.ends_with(".jpg") {
             num_of_files += 1;
         }
     }
@@ -47,35 +48,35 @@ fn copy_files(src_dir: &String, dest_dir: &String) -> Result<()> {
     for path in paths {
         print!("\rProgress: {}/{} files", copied_files, num_of_files);
         io::stdout().flush().ok().expect("Could not flush stdout");
-        // std::thread::sleep(std::time::Duration::from_secs(1));
+
         let options = CopyOptions::new();
         let file_path = path.unwrap().path();
         let file_name = format!("{}", file_path.display());
         if file_name.ends_with(".jpg") {
+            let mut found_exif = 0;
             match rexif::parse_file(&file_name) {
                 Ok(exif) => {
                     for entry in &exif.entries {
                         match entry.tag {
                             rexif::ExifTag::DateTime => {
-                                let date = entry.value.to_string();
-                                let date_split: Vec<_> = date.split(" ").collect();
-                                let formatted_date = date_split[0].replace(":", "_");
-                                let mut new_fname = format!("{}{}.jpg", dest_dir, formatted_date);
-                                let mut ctr = 1;
-                                while Path::new(&new_fname).exists() {
-                                    new_fname =
-                                        format!("{}{}({}).jpg", dest_dir, formatted_date, ctr);
-                                    ctr += 1;
-                                }
+                                let new_fname = format_exif_file_name(entry, dest_dir);
+                                found_exif = 1;
                                 copy(&file_path, new_fname, &options)?;
-                                copied_files += 1;
                             }
                             _ => (),
                         }
                     }
+                    if found_exif == 0 {
+                        let new_fname = format_unknown_file_name(dest_dir);
+                        copy(&file_path, new_fname, &options)?;
+                    }
                 }
-                Err(_e) => print!("xxx"),
+                _ => {
+                    let new_fname = format_unknown_file_name(dest_dir);
+                    copy(&file_path, new_fname, &options)?;
+                }
             }
+            copied_files += 1;
         }
     }
     print!("\rProgress: {}/{} files", copied_files, num_of_files);
@@ -86,4 +87,34 @@ fn copy_files(src_dir: &String, dest_dir: &String) -> Result<()> {
         );
     }
     Ok(())
+}
+fn format_exif_file_name(entry: &rexif::ExifEntry, dest_dir: &String) -> String {
+    let date = entry.value.to_string();
+    let date_split: Vec<_> = date.split(" ").collect();
+    let ymd: Vec<_> = date_split[0].split(":").collect();
+    let formatted_date = format!("{}-{}-{}", ymd[0], ymd[2], ymd[1]);
+    let year = ymd[0];
+    let mut new_fname = format!("{}photos/{}/{}.jpg", dest_dir, ymd[0], formatted_date);
+    std::fs::create_dir_all(format!("{}/photos/{}", dest_dir, year))
+        .expect("Directory couldn't be created");
+    let mut ctr = 1;
+    while Path::new(&new_fname).exists() {
+        new_fname = format!(
+            "{}photos/{}/{}({}).jpg",
+            dest_dir, year, formatted_date, ctr
+        );
+        ctr += 1;
+    }
+    new_fname
+}
+fn format_unknown_file_name(dest_dir: &String) -> String {
+    let mut ctr = 1;
+    let mut new_fname = format!("{}photos/unknown/{}.jpg", dest_dir, ctr);
+    std::fs::create_dir_all(format!("{}photos/unknown/", dest_dir))
+        .expect("Directory couldn't be created");
+    while Path::new(&new_fname).exists() {
+        new_fname = format!("{}photos/unknown/{}.jpg", dest_dir, ctr);
+        ctr += 1;
+    }
+    new_fname
 }
