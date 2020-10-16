@@ -1,13 +1,14 @@
 extern crate fs_extra;
-use fs_extra::error::*;
-use fs_extra::file::*;
+use fs_extra::error::Result;
+use fs_extra::file::copy;
+use fs_extra::file::CopyOptions;
 
 extern crate rexif;
 
 use std::env;
 use std::fs;
 use std::io;
-use std::io::prelude::*;
+use std::io::prelude::Write;
 use std::path::Path;
 use std::process;
 
@@ -33,7 +34,7 @@ fn help() {
     println!("Usage: [src_dir] [dest_dir]");
 }
 
-fn copy_files(src_dir: &String, dest_dir: &String) -> Result<()> {
+fn copy_files(src_dir: &str, dest_dir: &str) -> Result<()> {
     let paths_count = fs::read_dir(src_dir).unwrap();
     let mut num_of_files: u32 = 0;
     let mut copied_files: u32 = 0;
@@ -88,7 +89,7 @@ fn copy_files(src_dir: &String, dest_dir: &String) -> Result<()> {
     }
     Ok(())
 }
-fn format_exif_file_name(entry: &rexif::ExifEntry, dest_dir: &String) -> String {
+fn format_exif_file_name(entry: &rexif::ExifEntry, dest_dir: &str) -> String {
     let date = entry.value.to_string();
     let date_split: Vec<_> = date.split(" ").collect();
     let ymd: Vec<_> = date_split[0].split(":").collect();
@@ -107,7 +108,7 @@ fn format_exif_file_name(entry: &rexif::ExifEntry, dest_dir: &String) -> String 
     }
     new_fname
 }
-fn format_unknown_file_name(dest_dir: &String) -> String {
+fn format_unknown_file_name(dest_dir: &str) -> String {
     let mut ctr = 1;
     let mut new_fname = format!("{}photos/unknown/{}.jpg", dest_dir, ctr);
     std::fs::create_dir_all(format!("{}photos/unknown/", dest_dir))
