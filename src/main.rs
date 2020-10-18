@@ -35,7 +35,11 @@ fn help() {
 }
 
 fn copy_files(src_dir: &str, dest_dir: &str) -> Result<()> {
-    let paths_count = fs::read_dir(src_dir).unwrap();
+    let paths_count = match fs::read_dir(src_dir) {
+        Ok(res) => res,
+        Err(err) => panic!("Error procesing args: {:?}", err),
+    };
+    let paths_count = paths_count;
     let mut num_of_files: u32 = 0;
     let mut copied_files: u32 = 0;
     for file in paths_count {
@@ -102,7 +106,7 @@ fn format_exif_file_name(entry: &rexif::ExifEntry, dest_dir: &str) -> String {
     while Path::new(&new_fname).exists() {
         new_fname = format!(
             "{}photos/{}/{}({}).jpg",
-            dest_dir, year, formatted_date, ctr
+            dest_dir, year, formatted_date, num_to_str_fmt(ctr)
         );
         ctr += 1;
     }
@@ -114,8 +118,17 @@ fn format_unknown_file_name(dest_dir: &str) -> String {
     std::fs::create_dir_all(format!("{}photos/unknown/", dest_dir))
         .expect("Directory couldn't be created");
     while Path::new(&new_fname).exists() {
-        new_fname = format!("{}photos/unknown/{}.jpg", dest_dir, ctr);
+        new_fname = format!("{}photos/unknown/{}.jpg", dest_dir, 
+            num_to_str_fmt(ctr));
         ctr += 1;
     }
     new_fname
+}
+
+fn num_to_str_fmt(num: i32) -> String {
+    match num.to_string().len() {
+        1 => format!("{}{}", "00", num),
+        2 => format!("{}{}", "0", num),
+        _ => num.to_string()
+    }
 }
